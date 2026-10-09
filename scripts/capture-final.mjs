@@ -1,0 +1,22 @@
+import { chromium } from "@playwright/test";
+import { mkdir } from "node:fs/promises";
+import sharp from "sharp";
+import { expect } from "@playwright/test";
+await mkdir("artifacts",{recursive:true});
+const browser = await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROME_PATH || "C:/Program Files/Google/Chrome/Application/chrome.exe",headless:true,args:["--enable-webgl", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"]});
+const page = await browser.newPage({viewport:{width:1440,height:1000},deviceScaleFactor:1});
+await page.goto(`${process.env.PORTFOLIO_TEST_URL || "http://127.0.0.1:3000"}/`,{waitUntil:"networkidle"});
+await expect(page.locator(".intro")).toBeHidden();
+await page.waitForFunction(()=>Array.from(document.querySelectorAll(".page-reveal")).every((element)=>getComputedStyle(element).opacity==="1"));
+await page.screenshot({path:"artifacts/creative-orbit-desktop.png"});
+await page.setViewportSize({width:390,height:844});
+await page.waitForFunction(()=>document.querySelector(".gallery-title")?.getBoundingClientRect().width===390);
+await page.waitForLoadState("networkidle");
+await expect.poll(async()=>{
+  const screenshot = await page.screenshot();
+  const {channels} = await sharp(screenshot).extract({left:80,top:555,width:30,height:25}).stats();
+  return channels[0].mean - channels[1].mean;
+}).toBeGreaterThan(20);
+await page.screenshot({path:"artifacts/creative-orbit-mobile.png"});
+await browser.close();
+console.log("Captured production previews.");
