@@ -112,7 +112,7 @@ function FrameBudget({ active, focus, mobile, reduced, drag, canAnimate }: Pick<
 
 const ProjectPlane = memo(function ProjectPlane({ project, index, ...props }: SceneProps & { project: Project; index: number }) {
   const mesh = useRef<Mesh>(null);
-  const texture = useTexture(`/art/gallery/${project.slug}${props.mobile ? "-mobile" : ""}.webp`, props.mobile ? configureMobileTexture : configureTexture);
+  const texture = useTexture(`/design/${project.slug}.png`, props.mobile ? configureMobileTexture : configureTexture);
   const hovered = useRef(false);
   const targetScale = useRef(new Vector3());
   const entryStart = useRef<number | null>(null);

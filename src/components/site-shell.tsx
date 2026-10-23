@@ -11,6 +11,7 @@ import { EASE, useReducedMotion } from "@/lib/motion";
 import { OpeningProvider, useOpening } from "./opening";
 
 const NavigationContext = createContext<(href: string) => void>(() => {});
+const navigationLabels: Record<string, string> = { Work: "Radovi", About: "O meni", Contact: "Kontakt" };
 export function useTransitionNavigate() { return useContext(NavigationContext); }
 
 export function TransitionLink({ href, onClick, ...props }: ComponentProps<typeof Link>) {
@@ -94,7 +95,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   }, [pathname, reduced]);
 
   return <NavigationContext.Provider value={navigate}><OpeningProvider needsScene={pathname === "/"}>
-    <a href="#main" className="skip-link">Skip to content</a>
+    <a href="#main" className="skip-link">Pređi na sadržaj</a>
     <Header pathname={pathname} />
     {children}
     <div ref={curtain} className="transition-curtain" aria-hidden="true" />
@@ -114,7 +115,7 @@ function Header({ pathname }: { pathname: string }) {
     return () => context.revert();
   }, [canAnimate, reduced]);
   return <header className="site-header" ref={root}>
-      <TransitionLink href="/" aria-label="Filip Radojković — home" className="wordmark">fr<span className="wordmark-dot">.</span><span className="wordmark-caption">FILIP<br />RADOJKOVIĆ</span></TransitionLink>
-      <nav aria-label="Main navigation">{[{href:"/",label:"Work"},{href:"/about",label:"About"},{href:"/contact",label:"Contact"}].map(({href,label}) => <TransitionLink key={href} href={href} aria-current={pathname===href || (href==="/" && pathname.startsWith("/work")) ? "page" : undefined}>{label}{label==="Contact" && <ArrowUpRight size={13} />}</TransitionLink>)}</nav>
+      <TransitionLink href="/" aria-label="Filip Radojković — početna" className="wordmark">fr<span className="wordmark-dot">.</span><span className="wordmark-caption">FILIP<br />RADOJKOVIĆ</span></TransitionLink>
+      <nav aria-label="Glavna navigacija">{[{href:"/",label:"Work"},{href:"/about",label:"About"},{href:"/contact",label:"Contact"}].map(({href,label}) => <TransitionLink key={href} href={href} aria-current={pathname===href || (href==="/" && pathname.startsWith("/work")) ? "page" : undefined}>{navigationLabels[label]}{label==="Contact" && <ArrowUpRight size={13} />}</TransitionLink>)}</nav>
     </header>;
 }

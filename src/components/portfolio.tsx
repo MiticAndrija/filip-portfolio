@@ -15,6 +15,7 @@ import { usePageMotion } from "@/lib/page-motion";
 
 const Scene = dynamic(() => import("./gallery-scene"), { ssr: false });
 const filterOptions = ["All", "Events", "Film", "Identity", "Digital"] as const;
+const filterLabels = { All: "Sve", Events: "Događaji", Film: "Film", Identity: "Identitet", Digital: "Digitalno" };
 
 function ArtFallback({ mobile, active, onOpen }: { mobile: boolean; active: number; onOpen: (index: number) => void }) {
   const root = useRef<HTMLDivElement>(null);
@@ -29,7 +30,7 @@ function ArtFallback({ mobile, active, onOpen }: { mobile: boolean; active: numb
     return () => context.revert();
   }, [canAnimate, reduced]);
   return <div ref={root} className={`art-fallback ${mobile ? "art-fallback-mobile" : ""}`}>
-    {projects.map((project,index) => <button key={project.slug} className={`fallback-card fallback-card-${index}`} hidden={mobile && index!==active} onClick={() => onOpen(index)} aria-label={`View ${project.title}`}><Image src={project.artwork} alt={`${project.title} original concept poster`} width={800} height={1000} loading={index===active ? "eager" : "lazy"} /></button>)}
+    {projects.map((project,index) => <button key={project.slug} className={`fallback-card fallback-card-${index}`} hidden={mobile && index!==active} onClick={() => onOpen(index)} aria-label={`Prikaži ${project.title}`}><Image src={`/design/${project.slug}.png`} alt={`${project.title} — originalni plakat projekta`} width={800} height={1000} loading={index===active ? "eager" : "lazy"} /></button>)}
   </div>;
 }
 
@@ -117,25 +118,25 @@ export function Portfolio() {
   const fallback = useMemo(() => <ArtFallback mobile={mobile} active={active} onOpen={openFallback} />, [mobile, active, openFallback]);
 
   return <main id="main" ref={main} aria-busy={!canAnimate} className={`portfolio ${mode === "index" ? "portfolio-index" : ""}`}>
-    <div className="work-topline page-reveal"><span className="eyebrow">SELECTED WORK / 2025—2026</span></div>
-    <div className="view-switch page-reveal" role="group" aria-label="Portfolio view"><button aria-label="Spatial gallery" aria-pressed={mode==="space"} onClick={() => setMode("space")}><Grip size={14} /> Space</button><button aria-label="Project index" aria-pressed={mode==="index"} onClick={() => setMode("index")}><List size={14} /> Index</button></div>
+    <div className="work-topline page-reveal"><span className="eyebrow">IZABRANI RADOVI / 2025—2026</span></div>
+    <div className="view-switch page-reveal" role="group" aria-label="Prikaz radova"><button aria-label="Prostorna galerija" aria-pressed={mode==="space"} onClick={() => setMode("space")}><Grip size={14} /> Prostor</button><button aria-label="Lista projekata" aria-pressed={mode==="index"} onClick={() => setMode("index")}><List size={14} /> Lista</button></div>
 
     {mode==="space" ? <>
       <div className="gallery-title" aria-hidden="true"><div className="name-first">{[..."FILIP"].map((letter,index)=><span className="title-clip" key={index}><span className="title-char">{letter}</span></span>)}</div><div className="name-last">{[..."RADOJKOVIĆ"].map((letter,index)=><span className="title-clip" key={index}><span className="title-char">{letter}</span></span>)}</div></div>
-      <h1 className="sr-only">Filip Radojković — Creative Production / Social Media / Events</h1>
-      <div className="gallery-scene" aria-label="Interactive artwork gallery. Drag to explore, or use the project controls below." onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerLeave={() => { drag.current.down = false; }} onPointerCancel={(event) => { drag.current.down = false; if(event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId); }}>
+      <h1 className="sr-only">Filip Radojković — Kreativna produkcija / Društvene mreže / Događaji</h1>
+      <div className="gallery-scene" aria-label="Interaktivna galerija radova. Prevuci za pregled ili koristi kontrole za projekte ispod." onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerLeave={() => { drag.current.down = false; }} onPointerCancel={(event) => { drag.current.down = false; if(event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId); }}>
         {webgl ? <Scene active={active} focus={focus} highlighted={highlighted} canAnimate={canAnimate} mobile={mobile} reduced={reduced} drag={drag} onHover={setHover} onOpen={open} onReady={onReady} fallback={fallback} onContextLost={contextLost} /> : fallback}
       </div>
       <div className="gallery-bottom page-reveal">
-        <div className="explore-hint"><Move size={18} strokeWidth={1.25} /><span className="eyebrow">{mobile ? "SWIPE TO EXPLORE" : "DRAG TO EXPLORE"}<small>CLICK A WORLD TO STEP INSIDE</small></span></div>
-        <div className="selected-project" aria-live="polite"><span className="project-counter">{String((hover??active)+1).padStart(2,"0")}<span>/08</span></span><button className="selected-title" onClick={() => { drag.current.distance = 0; open(hover??active); }} aria-label={`Open ${current.title}`}><span>{current.title}<ArrowUpRight size={16} /></span><small>{current.category}</small></button><div className="project-arrows"><button onClick={() => step(-1)} aria-label="Previous project"><ArrowLeft size={16} /></button><button onClick={() => step(1)} aria-label="Next project"><ArrowRight size={16} /></button></div></div>
+        <div className="explore-hint"><Move size={18} strokeWidth={1.25} /><span className="eyebrow">{mobile ? "PREVUCI ZA PREGLED" : "POVUCI ZA PREGLED"}<small>KLIKNI ZA DETALJE</small></span></div>
+        <div className="selected-project" aria-live="polite"><span className="project-counter">{String((hover??active)+1).padStart(2,"0")}<span>/08</span></span><button className="selected-title" onClick={() => { drag.current.distance = 0; open(hover??active); }} aria-label={`Otvori ${current.title}`}><span>{current.title}<ArrowUpRight size={16} /></span><small>{current.category}</small></button><div className="project-arrows"><button onClick={() => step(-1)} aria-label="Prethodni projekat"><ArrowLeft size={16} /></button><button onClick={() => step(1)} aria-label="Sledeći projekat"><ArrowRight size={16} /></button></div></div>
       </div>
-      <div className="mobile-dots" role="group" aria-label="Choose a project">{projects.map((project,index) => <button key={project.slug} className={active===index?"active":""} onClick={()=>setActive(index)} aria-label={`Focus ${project.title}`} aria-pressed={active===index} />)}</div>
-    </> : <section className="project-index" aria-label="Project index">
-      <div className="index-heading"><h1>DIFFERENT<br />FREQUENCIES<span className="orange">.</span></h1><p>Eight worlds.<br />One creative orbit.</p></div>
-      <div className="index-filters" role="group" aria-label="Filter projects">{filterOptions.map((option) => <button key={option} aria-pressed={filter===option} onClick={()=>setFilter(option)}>{option}{option==="All" && <span>08</span>}</button>)}</div>
-      <div className="index-rows">{projects.map((project,index) => (filter==="All" || project.discipline===filter) && <TransitionLink className="index-row" key={project.slug} href={`/work/${project.slug}/`}><span className="eyebrow">{String(index+1).padStart(2,"0")}</span><Image src={project.artwork} width={80} height={100} alt={`${project.title} poster`} /><h2>{project.title}</h2><span className="index-category">{project.category}</span><span className="eyebrow index-year">{project.year}</span><ArrowUpRight strokeWidth={1.2} size={30} /></TransitionLink>)}</div>
-      <TransitionLink href="/about" className="index-about">Behind the work<ArrowDown size={18} /></TransitionLink>
+      <div className="mobile-dots" role="group" aria-label="Izaberi projekat">{projects.map((project,index) => <button key={project.slug} className={active===index?"active":""} onClick={()=>setActive(index)} aria-label={`Izaberi ${project.title}`} aria-pressed={active===index} />)}</div>
+    </> : <section className="project-index" aria-label="Lista projekata">
+      <div className="index-heading"><h1>RAZLIČITE<br />FREKVENCIJE<span className="orange">.</span></h1><p>Osam svetova.<br />Jedna kreativna orbita.</p></div>
+      <div className="index-filters" role="group" aria-label="Filtriraj projekte">{filterOptions.map((option) => <button key={option} aria-pressed={filter===option} onClick={()=>setFilter(option)}>{filterLabels[option]}{option==="All" && <span>08</span>}</button>)}</div>
+      <div className="index-rows">{projects.map((project,index) => (filter==="All" || project.discipline===filter) && <TransitionLink className="index-row" key={project.slug} href={`/work/${project.slug}/`}><span className="eyebrow">{String(index+1).padStart(2,"0")}</span><Image src={`/design/${project.slug}.png`} width={80} height={100} alt={`${project.title} — plakat`} /><h2>{project.title}</h2><span className="index-category">{project.category}</span><span className="eyebrow index-year">{project.year}</span><ArrowUpRight strokeWidth={1.2} size={30} /></TransitionLink>)}</div>
+      <TransitionLink href="/about" className="index-about">Iza radova<ArrowDown size={18} /></TransitionLink>
     </section>}
     <Footer className="site-footer-gallery" />
   </main>;

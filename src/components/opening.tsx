@@ -65,7 +65,7 @@ function Intro({ ready, onReveal }: { ready: boolean; onReveal: () => void }) {
         <span className="intro-clip" key={index}><span className="intro-character" style={{ "--opening-delay": `${(index + (wordIndex ? 4 : 0)) * 24}ms` } as CSSProperties}>{letter}</span></span>
       )}</div>
     )}</div>
-    <div className="intro-bottom"><span className="eyebrow">TUNING IN</span><span ref={count} className="eyebrow">000</span></div>
+    <div className="intro-bottom"><span className="eyebrow">UČITAVANJE</span><span ref={count} className="eyebrow">000</span></div>
     <div className="intro-rule"><span /></div>
   </div>;
 }
