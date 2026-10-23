@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   reactStrictMode: true,
   turbopack: { root: process.cwd() },
+  experimental: { agentUpgrade: "security" },
 };
 
 export default nextConfig;
